@@ -59,10 +59,12 @@ export function PaymentFormModal({ isOpen, onClose, onSuccess, initialData = nul
         .from('company_payments')
         .select('id')
         .ilike('company_name', formData.company_name.trim())
+        .eq('is_active', true)
         .single();
       
-      if (data) return "A payment tracker for this company already exists.";
+      if (data) return "An active payment tracker for this company already exists.";
     }
+
     return null;
   };
 

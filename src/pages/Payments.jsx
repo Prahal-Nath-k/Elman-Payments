@@ -23,6 +23,7 @@ export function Payments() {
       const { data, error } = await supabase
         .from('company_payments')
         .select('*')
+        .eq('is_active', true)
         .order('priority', { ascending: false }) // 'immediate' often sorts textually, but let's sort below
         .order('created_at', { ascending: false });
         
@@ -42,7 +43,7 @@ export function Payments() {
   const handleDelete = async (id) => {
     if(!confirm("Are you sure you want to delete this payment record?")) return;
     try {
-      const { error } = await supabase.from('company_payments').delete().eq('id', id);
+      const { error } = await supabase.from('company_payments').update({ is_active: false }).eq('id', id);
       if(error) throw error;
       fetchPayments();
     } catch(err) {
