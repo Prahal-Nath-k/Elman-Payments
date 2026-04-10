@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Receipt, Settings, CreditCard, Building2 } from 'lucide-react';
+import { LayoutDashboard, Receipt, Settings, CreditCard, LogOut } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const navItems = [
@@ -8,11 +8,16 @@ const navItems = [
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
-export function Sidebar() {
+export function Sidebar({ onLogout }) {
   const location = useLocation();
 
+  const handleLogout = () => {
+    localStorage.removeItem('elman_auth');
+    if (onLogout) onLogout();
+  };
+
   return (
-    <div className="hidden border-r bg-white md:block md:w-64 md:shrink-0 md:flex-col shadow-soft z-10 relative">
+    <div className="hidden border-r bg-white md:flex md:w-64 md:shrink-0 md:flex-col shadow-soft z-10 relative">
       <div className="flex h-16 items-center px-6 border-b border-muted">
         <div className="flex items-center gap-2 font-bold text-xl tracking-tight text-primary">
           <CreditCard className="h-6 w-6" />
@@ -40,6 +45,15 @@ export function Sidebar() {
             )
           })}
         </nav>
+      </div>
+      <div className="p-4 border-t border-muted">
+        <button 
+          onClick={handleLogout}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 transition-all text-red-600 hover:bg-red-50 font-medium text-sm"
+        >
+          <LogOut className="h-5 w-5" />
+          Logout
+        </button>
       </div>
     </div>
   );
