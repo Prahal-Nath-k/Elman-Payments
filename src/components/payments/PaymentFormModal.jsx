@@ -53,16 +53,29 @@ export function PaymentFormModal({ isOpen, onClose, onSuccess, initialData = nul
        return "Pending amount must be between 0 and total amount.";
     }
 
-    // Check duplicate
-    if (!initialData || initialData.company_name.toLowerCase() !== formData.company_name.trim().toLowerCase()) {
-      const { data, error } = await supabase
+    // Check duplicate — use maybeSingle() so no error is thrown when 0 rows match
+    const isEditingSameName =
+      initialData &&
+      initialData.company_name.trim().toLowerCase() === formData.company_name.trim().toLowerCase();
+
+    if (!isEditingSameName) {
+      let query = supabase
         .from('company_payments')
         .select('id')
-        .ilike('company_name', formData.company_name.trim())
-        .eq('is_active', true)
-        .single();
-      
-      if (data) return "An active payment tracker for this company already exists.";
+        .ilike('company_name', formData.company_name.trim());
+
+      // When editing, exclude the current record from the check
+      if (initialData?.id) {
+        query = query.neq('id', initialData.id);
+      }
+
+      const { data, error: dupError } = await query.maybeSingle();
+
+      if (dupError) {
+        console.error('Duplicate check error:', dupError);
+      } else if (data) {
+        return "A payment tracker for this company already exists.";
+      }
     }
 
     return null;
