@@ -10,7 +10,7 @@ import { PendingPayment } from './pages/PendingPayment';
 // ─── Dev / payment flags ──────────────────────────────────────────────────────
 // Set IS_DEV_BYPASS = true to skip payment wall for all users in this build.
 // Otherwise, use the in-app "Developer Access Bypass" button to set a localStorage flag.
-const IS_DEV_BYPASS = false;
+const IS_DEV_BYPASS = true;
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);
@@ -53,7 +53,7 @@ function App() {
    *  - dev mode OR paid → full app
    *  - otherwise        → payment wall
    */
-  const hasAccess = isDevMode || isPaid;
+  const hasAccess = true; // Payment wall removed — all authenticated users have full access
 
   return (
     <Router>
